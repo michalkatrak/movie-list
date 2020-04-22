@@ -1,9 +1,10 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {observer} from 'mobx-react-lite';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import styles from './Home.styles';
 import movies from '../../stores/movies';
 import ShowCarousel from './ShowCarousel';
+import {Loading} from '../Loading';
 
 const Home = observer(() => {
     const classes = styles();
@@ -18,24 +19,39 @@ const Home = observer(() => {
         documentaryMovies,
     } = useContext(movies);
 
+    const [loaded, setLoaded] = useState<boolean>(false);
+
+    const loadShows = async (): Promise<void> => {
+        await Promise.all([
+            getPopularSeries(),
+            getPopularMovies(),
+            getFamilyMovies(),
+            getDocumentaryMovies(),
+        ]);
+        setLoaded(true);
+    };
+
     useEffect(() => {
-        getPopularSeries();
-        getPopularMovies();
-        getFamilyMovies();
-        getDocumentaryMovies();
+        loadShows();
     }, []);
 
     return (
         <>
-            <h1 className={classes.headline}>Michal Movie Player</h1>
-            <h2 className={classes.headline}>Popular Movies</h2>
-            <ShowCarousel shows={popularMovies} />
-            <h2 className={classes.headline}>Popular TV Shows</h2>
-            <ShowCarousel shows={popularSeries} />
-            <h2 className={classes.headline}>Family Movies</h2>
-            <ShowCarousel shows={familyMovies} />
-            <h2 className={classes.headline}>Documentary Movies</h2>
-            <ShowCarousel shows={documentaryMovies} />
+            {loaded ? (
+                <>
+                    <h1 className={classes.headline}>Michal Movie Player</h1>
+                    <h2 className={classes.headline}>Popular Movies</h2>
+                    <ShowCarousel shows={popularMovies} />
+                    <h2 className={classes.headline}>Popular TV Shows</h2>
+                    <ShowCarousel shows={popularSeries} />
+                    <h2 className={classes.headline}>Family Movies</h2>
+                    <ShowCarousel shows={familyMovies} />
+                    <h2 className={classes.headline}>Documentary Movies</h2>
+                    <ShowCarousel shows={documentaryMovies} />
+                </>
+            ) : (
+                <Loading />
+            )}
         </>
     );
 });

@@ -1,7 +1,7 @@
 import {createContext} from 'react';
 import {action, observable} from 'mobx';
 import Axios, {AxiosResponse} from 'axios';
-import {Show} from '../types';
+import {Show, ShowDetail, ShowType} from '../types';
 import {createApiURL} from '../utils'
 
 class Movies {
@@ -9,6 +9,7 @@ class Movies {
     @observable popularSeries: Show[] = [];
     @observable familyMovies: Show[] = [];
     @observable documentaryMovies: Show[] = [];
+    @observable showDetail: ShowDetail = null;
 
     @action
     private requestGet = async (url: string, query?: string): Promise<AxiosResponse> => {
@@ -38,11 +39,57 @@ class Movies {
             id: movie.id,
             title: movie.title,
             poster_path: movie.poster_path,
-            overview: movie.overview,
-            release_date: new Date(movie.release_date),
         }));
 
         return movies;
+    };
+
+    @action
+    private getMovieDetail = async (id: string): Promise<ShowDetail> => {
+        const response = (await this.requestGet(`/movie/${id}`)).data;
+
+        if (!response) {
+            console.error('Something went wrong catching popular movies.');
+        }
+
+        const genres = response.genres.map((genre: any) => genre.name);
+
+        const detail: ShowDetail = {
+            type: 'movie',
+            id: response.id,
+            title: response.title,
+            overview: response.overview,
+            original_language: response.original_language,
+            genres,
+            year: new Date (response.release_date).getFullYear(),
+            poster_path: response.poster_path,
+        };
+
+        return detail;
+    };
+
+    @action
+    private getSeriesDetail = async (id: string): Promise<ShowDetail> => {
+        const response = (await this.requestGet(`/tv/${id}`)).data;
+
+        if (!response) {
+            console.error('Something went wrong catching popular movies.');
+        }
+
+        const genres = response.genres.map((genre: any) => genre.name);
+
+        const detail: ShowDetail = {
+            type: 'series',
+            id: response.id,
+            title: response.name,
+            overview: response.overview,
+            original_language: response.original_language,
+            genres,
+            year: new Date (response.first_air_date).getFullYear(),
+            poster_path: response.poster_path,
+        };
+
+        return detail;
     };
 
     @action
@@ -58,8 +105,6 @@ class Movies {
             id: movie.id,
             title: movie.title,
             poster_path: movie.poster_path,
-            overview: movie.overview,
-            release_date: new Date(movie.release_date),
         }));
 
         this.popularMovies = movies;
@@ -78,8 +123,6 @@ class Movies {
             id: serie.id,
             title: serie.name,
             poster_path: serie.poster_path,
-            overview: serie.overview,
-            release_date: new Date(serie.first_air_date),
         }));
 
         this.popularSeries = series;
@@ -93,6 +136,15 @@ class Movies {
     @action
     public getDocumentaryMovies = async (): Promise<void> => {
         this.documentaryMovies = await this.getMoviesByGenre(99);
+    };
+
+    @action
+    public getShowDetail = async (id: string, type: ShowType): Promise<void> => {
+        if (type === 'movie') {
+            this.showDetail = await this.getMovieDetail(id);
+        } else {
+            this.showDetail = await this.getSeriesDetail(id);
+        }
     };
 }
 
