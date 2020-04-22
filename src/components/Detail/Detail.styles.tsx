@@ -2,6 +2,8 @@ import {createUseStyles} from 'react-jss'
 
 const styles = createUseStyles({
     root: {
+        maxWidth: 1200,
+        margin: 'auto',
     },
     button: {
         border: 'none',
@@ -12,7 +14,7 @@ const styles = createUseStyles({
         top: 15,
         '&:focus': {
             outline: 'none',
-                '& $closeIcon': {
+            '& $closeIcon': {
                 color: '#fff',
             }
         },
@@ -53,7 +55,19 @@ const styles = createUseStyles({
     poster: {
         width: 350,
         height: 520,
-    }
+    },
+    playButton: {
+        marginTop: 100,
+        border: 'none',
+        background: '#333',
+        padding: '15px 40px',
+        fontWeight: 'bold',
+        color: '#fff',
+        cursor: 'pointer',
+        '&:hover': {
+            background: '#777',
+        }
+    },
 });
 
 export default styles;

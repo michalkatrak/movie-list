@@ -27,6 +27,10 @@ const Detail = observer(() => {
         history.push('/');
     };
 
+    const handlePlay = () => {
+        history.push(`/play/${showType}/${id}`);
+    };
+
     useEffect(() => {
         getShowDetail(id, type).then(() => setLoaded(true));
     }, []);
@@ -45,6 +49,7 @@ const Detail = observer(() => {
                         <span className={classes.genres}>({showDetail.genres.join(', ')})</span>
                         <span className={classes.overview}>{showDetail.overview}</span>
                         <span className={classes.data}>Original language: {showDetail.original_language}</span>
+                        <button className={classes.playButton} onClick={handlePlay}>PLAY</button>
                     </div>
                     <img
                         src={showDetail.poster_path ? createImgURL(showDetail.poster_path) : noPoster}
