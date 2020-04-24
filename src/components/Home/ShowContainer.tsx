@@ -3,7 +3,6 @@ import {useHistory} from 'react-router';
 import styles from './ShowContainer.styles';
 import {Show} from '../../types';
 import {createImgURL} from '../../utils';
-import noPoster from '../../img/no-poster.jpg'
 
 interface Props {
     show: Show;
@@ -14,7 +13,7 @@ const ShowContainer = (props: Props) => {
     const history = useHistory();
     const classes = show.poster_path
         ? styles(createImgURL(show.poster_path))()
-        : styles(noPoster)();
+        : styles(`${process.env.PUBLIC_URL}/img/no-poster.jpg`)();
     const handleClick = () => {
         history.push(`/${show.type}/${show.id}`);
     };

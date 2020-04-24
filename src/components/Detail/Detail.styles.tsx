@@ -28,6 +28,19 @@ const styles = createUseStyles({
         display: 'flex',
         padding: '70px 30px 0 30px',
         textAlign: 'left',
+        width: '100%',
+        justifyContent: 'space-between',
+        boxSizing: 'border-box',
+        '&$mobile': {
+            flexDirection: 'column-reverse',
+            padding: '70px 30px',
+            '& $overview': {
+                paddingRight: 0,
+            },
+            '& $poster': {
+                margin: 'auto',
+            },
+        }
     },
     closeIcon: {
         fontSize: 30,
@@ -68,6 +81,7 @@ const styles = createUseStyles({
             background: '#777',
         }
     },
+    mobile: {},
 });
 
 export default styles;

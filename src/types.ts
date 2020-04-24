@@ -16,4 +16,6 @@ export interface ShowDetail {
     poster_path: string,
 }
 
+export type Breakpoint = 'sm' | 'md' | 'lg';
+
 export type ShowType = 'movie' | 'series';

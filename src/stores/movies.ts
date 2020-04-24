@@ -31,7 +31,7 @@ class Movies {
         const response = (await this.requestGet('/movie/popular', `with_genres=${genre}`)).data;
 
         if (!response) {
-            console.error('Something went wrong catching popular movies.');
+            throw new Error('Something went wrong catching popular movies.');
         }
 
         const movies: Show[] = response.results.map((movie: any) => ({
@@ -49,7 +49,7 @@ class Movies {
         const response = (await this.requestGet(`/movie/${id}`)).data;
 
         if (!response) {
-            console.error('Something went wrong catching popular movies.');
+            throw new Error('Something went wrong catching popular movies.');
         }
 
         const genres = response.genres.map((genre: any) => genre.name);
@@ -73,7 +73,7 @@ class Movies {
         const response = (await this.requestGet(`/tv/${id}`)).data;
 
         if (!response) {
-            console.error('Something went wrong catching popular movies.');
+            throw new Error('Something went wrong catching popular movies.');
         }
 
         const genres = response.genres.map((genre: any) => genre.name);
@@ -97,7 +97,7 @@ class Movies {
         const response = (await this.requestGet('/movie/popular')).data;
 
         if (!response) {
-            console.error('Something went wrong catching popular movies.');
+            throw new Error('Something went wrong catching popular movies.');
         }
 
         const movies: Show[] = response.results.map((movie: any) => ({
@@ -115,7 +115,7 @@ class Movies {
         const response = (await this.requestGet('/tv/popular')).data;
 
         if (!response) {
-            console.error('Something went wrong catching popular TV series.');
+            throw new Error('Something went wrong catching popular TV series.');
         }
 
         const series: Show[] = response.results.map((serie: any) => ({
