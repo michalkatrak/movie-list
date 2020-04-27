@@ -5,6 +5,7 @@ import styles from './Home.styles';
 import movies from '../../stores/movies';
 import ShowCarousel from './ShowCarousel';
 import {Loading} from '../Loading';
+import HeaderWithSearchBox from '../Containers/HeaderWithSearchBox';
 
 const Home = observer(() => {
     const classes = styles();
@@ -38,17 +39,17 @@ const Home = observer(() => {
     return (
         <>
             {loaded ? (
-                <>
-                    <h1 className={classes.headline}>Michal Movie Player</h1>
-                    <h2 className={classes.headline}>Popular Movies</h2>
-                    <ShowCarousel shows={popularMovies} />
-                    <h2 className={classes.headline}>Popular TV Shows</h2>
-                    <ShowCarousel shows={popularSeries} />
-                    <h2 className={classes.headline}>Family Movies</h2>
-                    <ShowCarousel shows={familyMovies} />
-                    <h2 className={classes.headline}>Documentary Movies</h2>
-                    <ShowCarousel shows={documentaryMovies} />
-                </>
+                        <>
+                            <HeaderWithSearchBox/>
+                            <h2 className={classes.headline}>Popular Movies</h2>
+                            <ShowCarousel shows={popularMovies} />
+                            <h2 className={classes.headline}>Popular TV Shows</h2>
+                            <ShowCarousel shows={popularSeries} />
+                            <h2 className={classes.headline}>Family Movies</h2>
+                            <ShowCarousel shows={familyMovies} />
+                            <h2 className={classes.headline}>Documentary Movies</h2>
+                            <ShowCarousel shows={documentaryMovies} />
+                        </>
             ) : (
                 <Loading />
             )}

@@ -10,6 +10,8 @@ class Movies {
     @observable familyMovies: Show[] = [];
     @observable documentaryMovies: Show[] = [];
     @observable showDetail: ShowDetail = null;
+    @observable searchResultMovies: Show[] = [];
+    @observable searchResultSeries: Show[] = [];
 
     @action
     private requestGet = async (url: string, query?: string): Promise<AxiosResponse> => {
@@ -27,14 +29,8 @@ class Movies {
     };
 
     @action
-    private getMoviesByGenre = async (genre: number): Promise<Show[]> => {
-        const response = (await this.requestGet('/movie/popular', `with_genres=${genre}`)).data;
-
-        if (!response) {
-            throw new Error('Something went wrong catching popular movies.');
-        }
-
-        const movies: Show[] = response.results.map((movie: any) => ({
+    private mapMoviesResult = (response: AxiosResponse): Show[] => {
+        const movies: Show[] = response.data.results.map((movie: any) => ({
             type: 'movie',
             id: movie.id,
             title: movie.title,
@@ -42,6 +38,31 @@ class Movies {
         }));
 
         return movies;
+    };
+
+    private mapSeriesResult = (response: AxiosResponse): Show[] => {
+        const series: Show[] = response.data.results.map((serie: any) => ({
+            type: 'series',
+            id: serie.id,
+            title: serie.name,
+            poster_path: serie.poster_path,
+        }));
+
+        return series;
+    };
+
+    @action
+    private getMovies = async (genre?: number): Promise<Show[]> => {
+        const response = (await this.requestGet(
+            '/movie/popular',
+            genre ? `with_genres=${genre}` : null
+        ));
+
+        if (!response) {
+            throw new Error('Something went wrong catching popular movies.');
+        }
+
+        return this.mapMoviesResult(response);
     };
 
     @action
@@ -93,49 +114,60 @@ class Movies {
     };
 
     @action
-    public getPopularMovies = async (): Promise<void> => {
-        const response = (await this.requestGet('/movie/popular')).data;
-
-        if (!response) {
-            throw new Error('Something went wrong catching popular movies.');
-        }
-
-        const movies: Show[] = response.results.map((movie: any) => ({
-            type: 'movie',
-            id: movie.id,
-            title: movie.title,
-            poster_path: movie.poster_path,
-        }));
-
-        this.popularMovies = movies;
-    };
-
-    @action
-    public getPopularSeries = async (): Promise<void> => {
-        const response = (await this.requestGet('/tv/popular')).data;
+    private getSeries = async (): Promise<Show[]> => {
+        const response = (await this.requestGet('/tv/popular'));
 
         if (!response) {
             throw new Error('Something went wrong catching popular TV series.');
         }
 
-        const series: Show[] = response.results.map((serie: any) => ({
-            type: 'series',
-            id: serie.id,
-            title: serie.name,
-            poster_path: serie.poster_path,
-        }));
+        return this.mapSeriesResult(response);
+    };
 
-        this.popularSeries = series;
+    @action
+    private searchMovies = async (query: string): Promise<Show[]> => {
+        const response = (await this.requestGet(
+            '/search/movie', `query=${query}`
+        ));
+
+        if (!response) {
+            throw new Error('Something went wrong searching for movies.');
+        }
+
+        return this.mapMoviesResult(response);
+    };
+
+    @action
+    private searchSeries = async (query: string): Promise<Show[]> => {
+        const response = (await this.requestGet(
+            '/search/tv', `query=${query}`
+        ));
+
+        if (!response) {
+            throw new Error('Something went wrong searching for movies.');
+        }
+
+        return this.mapSeriesResult(response);
+    };
+
+    @action
+    public getPopularSeries = async (): Promise<void> => {
+        this.popularSeries = await this.getSeries();
+    };
+
+    @action
+    public getPopularMovies = async (): Promise<void> => {
+        this.popularMovies = await this.getMovies();
     };
 
     @action
     public getFamilyMovies = async (): Promise<void> => {
-        this.familyMovies = await this.getMoviesByGenre(10751);
+        this.familyMovies = await this.getMovies(10751);
     };
 
     @action
     public getDocumentaryMovies = async (): Promise<void> => {
-        this.documentaryMovies = await this.getMoviesByGenre(99);
+        this.documentaryMovies = await this.getMovies(99);
     };
 
     @action
@@ -146,6 +178,12 @@ class Movies {
             this.showDetail = await this.getSeriesDetail(id);
         }
     };
+
+    @action
+    public search = async (query: string): Promise<void> => {
+        this.searchResultMovies = await this.searchMovies(query);
+        this.searchResultSeries = await this.searchSeries(query);
+    }
 }
 
 const moviesStore: Movies = new Movies();

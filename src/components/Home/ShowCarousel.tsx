@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import {IconContext} from 'react-icons';
 import {FaChevronLeft, FaChevronRight} from 'react-icons/fa';
 import {ButtonBack, ButtonNext, CarouselProvider, Slide, Slider} from 'pure-react-carousel';
-import ShowContainer from './ShowContainer';
+import {ShowContainer} from '../Containers';
 import {Breakpoint, Show} from '../../types';
 import styles from './ShowCarousel.styles';
 import {ResponsiveContainer} from '../ResponsiveContainer';
